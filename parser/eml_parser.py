@@ -11,6 +11,7 @@ import pdfplumber
 
 from models.attachment import Attachment, ExcelInfo, ExcelLLMInfo, PDFInfo
 from models.email import Email, EmailMetadata
+from parser.excel import get_processor
 
 
 class EmlParser:
@@ -72,6 +73,10 @@ class EmlParser:
 
     def enrich(self, att: Attachment) -> None:
         att.info = self._enrich(att)
+        if att.is_excel() and att.info is not None:
+            wb = openpyxl.load_workbook(io.BytesIO(att.content), data_only=True)
+            att.info.parsed_data = get_processor(att).process(wb)
+            wb.close()
 
     def _enrich(self, att: Attachment) -> ExcelInfo | PDFInfo | None:
         if att.is_excel():

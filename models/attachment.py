@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
 
 
 @dataclass
@@ -18,6 +22,7 @@ class ExcelInfo:
     col_count: dict[str, int]
     headers: dict[str, list[str]]  # sheet -> first row values
     llm_info: ExcelLLMInfo | None = None
+    parsed_data: BaseModel | None = None  # resultado del ExcelProcessor
 
 
 @dataclass
