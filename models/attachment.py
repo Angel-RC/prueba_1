@@ -21,6 +21,7 @@ class ExcelInfo:
     row_count: dict[str, int]
     col_count: dict[str, int]
     headers: dict[str, list[str]]  # sheet -> first row values
+    sheet_text: str | None = None          # primera hoja en texto plano para el LLM
     llm_info: ExcelLLMInfo | None = None
     parsed_data: BaseModel | None = None  # resultado del ExcelProcessor
 

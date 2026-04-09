@@ -100,15 +100,25 @@ class EmlParser:
             first_row = rows[0] if rows else []
             headers[name] = [str(c) if c is not None else "" for c in first_row]
 
+        first_sheet_text = self._sheet_to_text(wb[sheets[0]]) if sheets else None
         wb.close()
         info = ExcelInfo(
             sheets=sheets,
             row_count=row_count,
             col_count=col_count,
             headers=headers,
+            sheet_text=first_sheet_text,
         )
         # info.llm_info = self._enrich_excel_with_llm(info)  # TODO: activar cuando el LLM esté configurado
         return info
+
+    def _sheet_to_text(self, ws) -> str:
+        lines = []
+        for row in ws.iter_rows(values_only=True):
+            if all(cell is None for cell in row):
+                continue
+            lines.append("\t".join("" if cell is None else str(cell) for cell in row))
+        return "\n".join(lines)
 
     def _enrich_excel_with_llm(self, info: ExcelInfo) -> ExcelLLMInfo:
         # TODO: construir prompt a partir de info.sheets, info.headers, etc.
